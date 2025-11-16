@@ -13,11 +13,6 @@ Architecture:
   * Calculates total costs
   * Optimizes for budget constraints
   * Generates shopping list with quantities
-
-Usage:
-  CLI Mode: python recipe_meal_planner.py
-  Web UI: adk web (uses agent.py)
-  API Server: adk api_server --allow_origins=http://localhost:4200
 """
 
 from google.adk.runners import InMemoryRunner

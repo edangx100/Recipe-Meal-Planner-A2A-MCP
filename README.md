@@ -184,13 +184,51 @@ These values are loaded from environment variables with sensible defaults in `ut
 
 ## Usage
 
-### Running the Application
+### Option 1: ADK Web UI (Recommended - Interactive Interface)
+
+Run the interactive web interface to chat with your meal planner agent:
+
+```bash
+# Make sure you're in the project directory
+cd /home/ed/kaggle/recipe
+
+# Activate virtual environment
+source .venv/bin/activate
+
+# Start ADK web UI (default port 8000)
+adk web agents_web
+```
+
+Then open your browser to **http://localhost:8000**
+
+**Using a custom port:**
+
+```bash
+# Use a different port if 8000 is already in use
+adk web --port 8080 agents_web
+```
+
+Then open **http://localhost:8080**
+
+**Try these queries in the web UI:**
+
+- "Plan 5 dinners under $50 total"
+- "Plan 3 vegetarian dinners under $50 total with a focus on protein"
+- "Give me 4 budget-friendly dinner recipes"
+- "Plan a week of healthy dinners under $70"
+
+**What you'll see:**
+- Real-time streaming of agent responses
+- Detailed trace of the LangGraph state machine workflow
+- Complete meal plans with recipes, shopping lists, and price breakdowns
+
+### Option 2: CLI Mode (Pre-configured Queries)
+
+Run the command-line version with pre-configured test scenarios:
 
 ```bash
 python recipe_meal_planner.py
 ```
-
-### Example Requests
 
 The script includes two test scenarios:
 
@@ -232,3 +270,39 @@ Total Cost: $47.23
 
 Enjoy your meals!
 ```
+
+## Troubleshooting
+
+### ADK Web UI Issues
+
+**Problem: Port already in use**
+```bash
+ERROR: [Errno 98] address already in use
+```
+
+**Solution:** Use a different port or kill the existing process:
+```bash
+# Option 1: Use a different port
+adk web --port 8001 agents_web
+
+# Option 2: Find and kill the process using port 8000
+lsof -i :8000  # Find the PID
+kill -9 <PID>  # Replace <PID> with the actual process ID
+```
+
+**Problem: No response when submitting queries in web UI**
+
+**Solution:** Make sure you're using the correct command:
+```bash
+adk web agents_web  # ✓ Correct - includes the agents directory
+adk web             # ✗ Wrong - won't find the agent
+```
+
+**Problem: Slow responses (30-60 seconds)**
+
+This is normal! The agent performs multiple complex operations:
+1. LangGraph state machine for recipe selection (4 nodes)
+2. Code execution for cost calculations
+3. Response formatting
+
+For more detailed troubleshooting, see `ADK_WEB_SETUP.md` and `QUICK_START.md`.
