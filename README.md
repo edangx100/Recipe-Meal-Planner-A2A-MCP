@@ -40,7 +40,7 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 
 **Session Management:**
 - **InMemorySessionService** (`utils.py`) - Creates and manages user sessions with session_id and user_id tracking
-- Persistent conversation state across multiple requests (`recipe_meal_planner.py:33-36`)
+- Persistent conversation state across multiple requests (`recipe_meal_planner.py`)
 
 
 ## Architecture (3-Agent System)
