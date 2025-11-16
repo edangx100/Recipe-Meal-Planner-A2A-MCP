@@ -1,0 +1,14 @@
+# Core Google ADK (Agent Development Kit) dependencies
+google-genai==1.50.1
+google-adk==1.18.0
+
+# LangGraph and LangChain dependencies for state machine workflow
+# Note: langgraph<1.0 required for compatibility with google-adk 1.18.0
+langgraph==0.6.11
+langchain-core==1.0.5
+
+# Environment variable management
+python-dotenv==1.2.1
+
+# Data validation and structured outputs
+pydantic==2.12.4
