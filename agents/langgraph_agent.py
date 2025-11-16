@@ -13,6 +13,10 @@ Workflow:
 """
 
 from typing import TypedDict, Annotated, Sequence, List
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, SystemMessage
+from langgraph.graph import StateGraph, END
+from langgraph.checkpoint.memory import MemorySaver
+
 
 # Constants
 COST_CALCULATION_FLAG = "[CALCULATE_COST]"
@@ -23,10 +27,6 @@ recipe_graph = None
 
 # --- LangGraph State Machine Setup ---
 try:
-    from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, SystemMessage
-    from langgraph.graph import StateGraph, END
-    from langgraph.checkpoint.memory import MemorySaver
-
     class RecipePlannerState(TypedDict):
         """State for the recipe planning workflow"""
         messages: Annotated[Sequence[BaseMessage], lambda x, y: x + y]

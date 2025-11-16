@@ -62,6 +62,10 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 - **State Management**: Uses MemorySaver for checkpointing between nodes
 - **Output**: Triggers `[CALCULATE_COST]` flag when ready for cost calculation
 
+<p align="center">
+  <img src="langgraph_image.png" alt="LangGraph State Machine" width="16%">
+</p>
+
 ### 3. Code Savvy Agent (`code_savvy_agent_builtin`)
 - **Role**: Budget optimization specialist with Python code execution
 - **Capabilities**:
