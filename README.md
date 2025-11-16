@@ -155,8 +155,6 @@ User: "Plan 5 dinners under $50 total"
 
 ### Installation
 
-[uv](https://github.com/astral-sh/uv) is an extremely fast Python package installer and resolver.
-
 ```bash
 # Install uv if you haven't already
 curl -LsSf https://astral.sh/uv/install.sh | sh
