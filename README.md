@@ -1,5 +1,9 @@
 # Recipe Meal Planner
 
+<p align="center">
+  <img src="image1.png" alt="Recipe Meal Planner" width="40%">
+</p>
+
 An intelligent meal planning system built with Google ADK (Agent Development Kit) and LangGraph that creates budget-conscious meal plans with optimized shopping lists.
 
 ## Overview
