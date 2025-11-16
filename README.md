@@ -51,7 +51,6 @@ This project demonstrates a multi-agent architecture where specialized AI agents
   - Routes requests to appropriate specialized agents
   - Ensures meal plans meet budget requirements
   - Formats final output with recipe lists and shopping details
-- **Model**: Gemini 2.5 Flash (reasoning model)
 
 ### 2. Recipe Planner Agent (`recipe_planner_agent`)
 - **Role**: Handles recipe selection logic using a LangGraph state machine
