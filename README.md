@@ -14,6 +14,31 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 - **Cost Calculation**: Generates detailed shopping lists with quantities and prices
 - **Structured Output Parsing**: Uses LLM structured output to extract meal planning requirements from natural language
 
+## Technical Features
+
+### 1. Multi-agent System ✅
+
+**Three LLM-Powered Agents**
+
+1. **Orchestrator Agent** (`agents/orchestrator.py`)
+2. **Recipe Planner Agent** (`agents/orchestrator.py`)
+3. **Code Savvy Agent** (`agents/adk_agent.py`)
+
+### 2. Tools ✅
+
+**Custom Tools:**
+- **AgentTool** (`agents/orchestrator.py`) - Wraps agents as callable tools for delegation
+
+**Built-in Tools:**
+- **BuiltInCodeExecutor** (`agents/adk_agent.py`) - Enables dynamic Python code generation and execution for budget calculations and cost optimization
+
+### 3. Sessions & Memory ✅
+
+**Session Management:**
+- **InMemorySessionService** (`utils.py`) - Creates and manages user sessions with session_id and user_id tracking
+- Persistent conversation state across multiple requests (`recipe_meal_planner.py:33-36`)
+
+
 ## Architecture (3-Agent System)
 
 ### 1. Orchestrator Agent (`meal_plan_orchestrator`)
@@ -203,12 +228,3 @@ Total Cost: $47.23
 
 Enjoy your meals!
 ```
-
-## Key Technical Features
-
-- **LangGraph State Machine**: Stateful workflow with 4 nodes and conditional routing
-- **Structured Output Parsing**: Uses Pydantic models to parse natural language requests
-- **Memory Checkpointing**: MemorySaver enables state persistence across nodes
-- **Code Execution**: BuiltInCodeExecutor allows agents to run Python for calculations
-- **Async Architecture**: Uses `asyncio` for non-blocking agent communication
-- **Agent-to-Agent Communication**: Orchestrator delegates to specialized agents using AgentTool
