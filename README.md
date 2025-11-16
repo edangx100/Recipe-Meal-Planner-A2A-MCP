@@ -139,9 +139,8 @@ User: "Plan 5 dinners under $50 total"
 ├── agents_web/                  # ADK Web UI configuration
 │   └── recipe_meal_planner/
 │       ├── agent.py            # Web UI agent entry point
-│       ├── __init__.py         # Package initialization
-│       └── .env                # API keys for web UI
-├── .env                        # API keys (root level)
+│       └── __init__.py         # Package initialization
+├── .env                        # API keys (shared by CLI and Web UI)
 ├── requirements.txt            # Python dependencies
 ├── image1.png                  # Project screenshot
 └── README.md                   # This file
