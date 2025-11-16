@@ -45,7 +45,7 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 
 ## Recipe Database
 
-The system includes 6 pre-configured recipes in `agents/langgraph_agent.py:100-155`:
+The system includes 10 pre-configured recipes in `recipes.py`:
 
 | Recipe | Estimated Cost | Dietary Tags |
 |--------|---------------|--------------|
@@ -55,6 +55,10 @@ The system includes 6 pre-configured recipes in `agents/langgraph_agent.py:100-1
 | Lentil Soup | $6.50 | vegetarian, vegan, gluten-free |
 | Baked Salmon with Veggies | $10.99 | gluten-free, low-carb |
 | Veggie Fried Rice | $5.00 | vegetarian |
+| Margherita Pizza | $9.00 | vegetarian |
+| Greek Salad | $11.25 | vegetarian, gluten-free, low-carb |
+| Beef Chili | $10.74 | gluten-free |
+| Mushroom Risotto | $15.00 | vegetarian, gluten-free |
 
 Each recipe includes detailed ingredient lists with quantities and individual prices.
 
@@ -109,6 +113,7 @@ User: "Plan 5 dinners under $50 total"
 ```
 /home/ed/kaggle/recipe/
 ├── recipe_meal_planner.py      # Main entry point
+├── recipes.py                   # Recipe database with 10 recipes
 ├── utils.py                     # Environment variables & session management
 ├── agents/
 │   ├── orchestrator.py         # Main orchestrator agent

@@ -93,66 +93,13 @@ Identify:
 
     def suggest_recipes_node(state: RecipePlannerState):
         """Suggests dinner recipes based on preferences and requested count"""
+        import sys
+        import os
+        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from recipes import all_recipes
+
         preferences = state.get('dietary_preferences', 'no specific restrictions')
         num_recipes = state.get('num_recipes', 5)
-
-        # Sample recipe database (in production, this would be more sophisticated)
-        all_recipes = {
-            'Spaghetti Aglio e Olio': {
-                'ingredients': [
-                    {'item': 'spaghetti', 'quantity': '1 lb', 'price': 1.50},
-                    {'item': 'garlic', 'quantity': '1 bulb', 'price': 0.75},
-                    {'item': 'olive oil', 'quantity': '1/2 cup', 'price': 2.00},
-                    {'item': 'red pepper flakes', 'quantity': '1 tsp', 'price': 0.25}
-                ],
-                'tags': ['vegetarian', 'vegan']
-            },
-            'Chicken Stir-Fry': {
-                'ingredients': [
-                    {'item': 'chicken breast', 'quantity': '1 lb', 'price': 4.99},
-                    {'item': 'mixed vegetables', 'quantity': '2 cups', 'price': 2.50},
-                    {'item': 'soy sauce', 'quantity': '3 tbsp', 'price': 0.50},
-                    {'item': 'rice', 'quantity': '2 cups', 'price': 1.00}
-                ],
-                'tags': ['gluten-free']
-            },
-            'Black Bean Tacos': {
-                'ingredients': [
-                    {'item': 'black beans', 'quantity': '2 cans', 'price': 2.00},
-                    {'item': 'corn tortillas', 'quantity': '12 count', 'price': 2.50},
-                    {'item': 'avocado', 'quantity': '2 count', 'price': 3.00},
-                    {'item': 'salsa', 'quantity': '1 jar', 'price': 2.50}
-                ],
-                'tags': ['vegetarian', 'vegan', 'gluten-free']
-            },
-            'Lentil Soup': {
-                'ingredients': [
-                    {'item': 'lentils', 'quantity': '1 lb', 'price': 2.00},
-                    {'item': 'carrots', 'quantity': '4 count', 'price': 1.50},
-                    {'item': 'celery', 'quantity': '3 stalks', 'price': 1.00},
-                    {'item': 'vegetable broth', 'quantity': '4 cups', 'price': 2.00}
-                ],
-                'tags': ['vegetarian', 'vegan', 'gluten-free']
-            },
-            'Baked Salmon with Veggies': {
-                'ingredients': [
-                    {'item': 'salmon fillet', 'quantity': '1 lb', 'price': 7.99},
-                    {'item': 'broccoli', 'quantity': '1 lb', 'price': 2.00},
-                    {'item': 'lemon', 'quantity': '1 count', 'price': 0.50},
-                    {'item': 'olive oil', 'quantity': '2 tbsp', 'price': 0.50}
-                ],
-                'tags': ['gluten-free', 'low-carb']
-            },
-            'Veggie Fried Rice': {
-                'ingredients': [
-                    {'item': 'rice', 'quantity': '2 cups', 'price': 1.00},
-                    {'item': 'mixed vegetables', 'quantity': '2 cups', 'price': 2.50},
-                    {'item': 'eggs', 'quantity': '3 count', 'price': 1.00},
-                    {'item': 'soy sauce', 'quantity': '3 tbsp', 'price': 0.50}
-                ],
-                'tags': ['vegetarian']
-            }
-        }
 
         # Filter recipes based on preferences
         selected_recipes = []
