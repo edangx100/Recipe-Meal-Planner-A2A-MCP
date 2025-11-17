@@ -8,7 +8,7 @@ This is the A2A (Agent-to-Agent) version of the Recipe Meal Planner web interfac
 ┌─────────────┐         ┌──────────────────┐         ┌─────────────────────┐
 │   Browser   │────────▶│   ADK Web UI     │────────▶│   Orchestrator      │
 │   (User)    │         │   (Frontend)     │   A2A   │   (orchestrator_    │
-│             │         │                  │◄────────│    a2a.py)          │
+│             │         │                  │◄────────│    agent.py)        │
 └─────────────┘         └──────────────────┘         └──────────┬──────────┘
                                                                  │
                                                                  │ A2A Protocol
@@ -86,7 +86,7 @@ http://localhost:8000
 - Monolithic architecture
 - Recipe Planner embedded in orchestrator
 
-### A2A Approach (agents/orchestrator_a2a.py):
+### A2A Approach (agents/orchestrator_agent.py):
 - ✅ **No LangGraphAgent** - Recipe Planner wrapped as a tool function
 - ✅ **Network communication** - HTTP/JSON-RPC via A2A protocol
 - ✅ **Distributed architecture** - Recipe Planner runs as independent server
@@ -101,7 +101,7 @@ http://localhost:8000
 - Auto-generates agent card at `/.well-known/agent-card.json`
 - Uses `to_a2a()` to create A2A-compatible server
 
-### 2. Orchestrator A2A (`agents/orchestrator_a2a.py`)
+### 2. Orchestrator A2A (`agents/orchestrator_agent.py`)
 - Uses `RemoteA2aAgent` to connect to Recipe Planner
 - Coordinates between Recipe Planner (remote) and Code Agent (local)
 - Translates agent calls to A2A HTTP requests
@@ -153,7 +153,7 @@ echo "GOOGLE_API_KEY=your_api_key_here" >> .env
 # Kill existing process
 lsof -ti:8001 | xargs kill -9
 
-# Or change port in agents/orchestrator_a2a.py
+# Or change port in agents/orchestrator_agent.py
 # RECIPE_PLANNER_A2A_URL = "http://localhost:8002"
 ```
 
@@ -184,7 +184,7 @@ root_agent = orchestrator
 ### To use A2A (current):
 ```python
 # In agent.py
-from orchestrator_a2a import get_orchestrator_a2a
+from agents.orchestrator_agent import get_orchestrator_a2a
 root_agent = get_orchestrator_a2a()
 ```
 

@@ -23,7 +23,7 @@ load_dotenv()
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from google.adk.a2a.utils.agent_to_a2a import to_a2a
-from recipe_planner_a2a_agent import get_recipe_planner_agent
+from agents.recipe_planner_a2a_agent import get_recipe_planner_agent
 
 # Get the Recipe Planner Agent
 recipe_planner_agent = get_recipe_planner_agent()

@@ -18,13 +18,13 @@ from typing import Optional
 from langchain_core.messages import HumanMessage
 
 # Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from google.adk.agents import Agent as AdkAgent
 from google.adk.models.google_llm import Gemini
 from google.genai import types
 
-from agents.langgraph_agent_mcp import (
+from agents.langgraph_helper import (
     get_recipe_graph,
     is_langgraph_available,
     RecipePlannerState

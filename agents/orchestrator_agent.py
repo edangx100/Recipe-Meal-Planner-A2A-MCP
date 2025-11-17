@@ -25,7 +25,7 @@ from google.adk.models.google_llm import Gemini
 from google.genai import types
 
 from utils import DEFAULT_REASONING_LLM
-from agents.adk_agent import code_savvy_agent_builtin
+from agents.code_savy_agent import code_savvy_agent_builtin
 
 # Configuration
 RECIPE_PLANNER_A2A_URL = "http://localhost:8001"

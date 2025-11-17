@@ -6,7 +6,7 @@
 
 An intelligent meal planning system built with Google ADK (Agent Development Kit) and LangGraph that creates budget-conscious meal plans with optimized shopping lists.
 
-**✨ Now features Agent-to-Agent (A2A) communication architecture for distributed microservices deployment!**
+**✨ Built with Agent-to-Agent (A2A) communication architecture for distributed microservices deployment!**
 
 ## Overview
 
@@ -19,22 +19,25 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 - **Budget Optimization**: Ensures meal plans stay within specified budget constraints (default: $50)
 - **Cost Calculation**: Generates detailed shopping lists with quantities and prices
 - **Structured Output Parsing**: Uses LLM structured output to extract meal planning requirements from natural language
-- **A2A Communication**: Distributed microservices architecture with Agent-to-Agent protocol (optional)
+- **A2A Communication**: Distributed microservices architecture with Agent-to-Agent protocol
 
 ## Technical Features
 
-### ✅1. Multi-agent System 
+### ✅1. Multi-agent System
 
 **Three LLM-Powered Agents**
 
-1. **Orchestrator Agent** (`agents/orchestrator.py`)
-2. **Recipe Planner Agent** (`agents/langgraph_agent_mcp.py`)
+1. **Orchestrator Agent** (`agents/orchestrator_agent.py`)
+2. **Recipe Planner Agent** (`recipe_planner_a2a_agent.py` with `agents/langgraph_agent_mcp.py`)
 3. **Code Savvy Agent** (`agents/adk_agent.py`)
 
-### ✅2. Tools 
+### ✅2. Tools
+
+**A2A Remote Agents:**
+- **RemoteA2aAgent** (`agents/orchestrator_agent.py`) - Communicates with Recipe Planner via A2A protocol
 
 **Custom Tools:**
-- **AgentTool** (`agents/orchestrator.py`) - Wraps agents as callable tools for delegation
+- **run_recipe_planner** (`recipe_planner_a2a_agent.py`) - Wraps LangGraph state machine as tool function
 
 **Built-in Tools:**
 - **BuiltInCodeExecutor** (`agents/adk_agent.py`) - Enables dynamic Python code generation and execution for budget calculations and cost optimization
@@ -43,21 +46,16 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 
 **Session Management:**
 - **InMemorySessionService** (`utils.py`) - Creates and manages user sessions with session_id and user_id tracking
-- Persistent conversation state across multiple requests (`recipe_meal_planner.py`)
+- Persistent conversation state across multiple requests (`recipe_meal_planner_a2a.py`)
 
-### ✅4. Multi-Agent Coordination & A2A Communication
+### ✅4. A2A Communication Architecture
 
-**Inter-Agent Communication:**
-- **AgentTool** (`google.adk.tools.agent_tool`) - Wraps agents as callable tools for delegation
-- Orchestrator Agent invokes Recipe Planner Agent and Code Savvy Agent as tools
-- Enables seamless coordination between ADK agents and LangGraph agents
-
-**A2A Architecture (Optional - Distributed Microservices):**
-- **RemoteA2aAgent** - Consume Recipe Planner via A2A protocol (HTTP/JSON-RPC on port 8001)
-- **No LangGraphAgent Dependency** - LangGraph wrapped in tool function instead of framework wrapper
+**Distributed Microservices:**
+- **RemoteA2aAgent** - Orchestrator consumes Recipe Planner via A2A protocol (HTTP/JSON-RPC on port 8001)
 - **Distributed Deployment** - Recipe Planner runs as independent server, Orchestrator as client
 - **Framework Agnostic** - Standard A2A protocol enables cross-framework, cross-language communication
 - **Independent Scaling** - Each service can scale separately in production environments
+- **AgentTool for Code Savvy** - Orchestrator uses standard AgentTool to invoke Code Savvy Agent locally
 
 ### ✅5. Model Context Protocol (MCP)
 
@@ -66,36 +64,70 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 - **MCP Server** (`recipe_mcp_server.py`) - Provides 6 tools and 2 resources for recipe database operations
 - **Protocol-based decoupling** - No direct imports of `recipes.py`, all access via standardized MCP protocol
 
+#### MCP Server Tools
+
+The MCP server (`recipe_mcp_server.py`) exposes the following tools for recipe database operations:
+
+**Tools (6):**
+1. **search_recipes_by_name** - Search for recipes by name (case-insensitive partial match)
+2. **filter_recipes_by_tags** - Filter recipes by dietary tags/preferences (vegetarian, vegan, gluten-free, low-carb)
+3. **get_recipe_details** - Get complete details for a specific recipe including ingredients with quantities and prices
+4. **list_all_recipes** - List all available recipes with tags and estimated costs
+5. **search_by_ingredient** - Find all recipes that contain a specific ingredient
+6. **get_recipes_by_budget** - Find all recipes within a specified budget per recipe
+
+**Resources (2):**
+1. **recipe://database/summary** - Provides database statistics (total recipes, available tags, average cost)
+2. **recipe://tags/available** - Lists all available dietary tags with recipe counts
+
 
 ## Architecture (3-Agent System)
 
-### 1. Orchestrator Agent (`meal_plan_orchestrator`)
-- **Role**: Main coordinator that receives user requests and delegates tasks
+### 1. Orchestrator Agent (`meal_plan_orchestrator_a2a`)
+**File**: `agents/orchestrator_agent.py`
+
+- **Role**: Main coordinator that receives user requests and delegates tasks using A2A protocol
+- **Communication Pattern**:
+  - Consumes Recipe Planner Agent via **RemoteA2aAgent** (A2A protocol over HTTP/JSON-RPC on port 8001)
+  - Invokes Code Savvy Agent locally via **AgentTool**
 - **Capabilities**:
-  - Routes requests to appropriate specialized agents
+  - Routes meal planning requests to remote Recipe Planner Agent
+  - Delegates cost calculations to local Code Savvy Agent
   - Ensures meal plans meet budget requirements
   - Formats final output with recipe lists and shopping details
+- **Model**: Gemini 2.5 Flash (reasoning model)
 
 ### 2. Recipe Planner Agent (`recipe_planner_agent`)
-- **Role**: Handles recipe selection logic using a LangGraph state machine
-- **Workflow**: 4-node state machine
+**Files**: `agents/recipe_planner_a2a_agent.py`, `agents/langgraph_helper.py`
+
+- **Role**: Handles recipe selection logic using a LangGraph state machine accessed via MCP
+- **Deployment**: Runs as independent A2A server on port 8001 (`recipe_planner_a2a_server.py`)
+- **Tool**: `run_recipe_planner()` function wraps the LangGraph state machine for ADK compatibility
+- **Workflow**: 4-node LangGraph state machine
   1. `gather_preferences`: Extracts dietary requirements and recipe count using LLM structured output (Pydantic models)
-  2. `suggest_recipes`: Selects recipes from database based on preferences
+  2. `suggest_recipes`: Selects recipes from database via MCP client (calls `filter_recipes_by_tags`, `list_all_recipes`, `get_recipe_details`)
   3. `check_overlap`: Identifies shared ingredients across selected recipes
-  4. `optimize_list`: Consolidates ingredients into a unified shopping list
+  4. `optimize_list`: Consolidates ingredients into a unified shopping list and flags for cost calculation
+- **MCP Integration**: Uses `RecipeMCPClient` to access recipe database via MCP protocol
+- **Model**: Gemini 2.5 Flash Lite
 
 <p align="center">
   <img src="langgraph_image.png" alt="LangGraph State Machine" width="16%">
 </p>
 
 ### 3. Code Savvy Agent (`code_savvy_agent_builtin`)
-- **Role**: Budget optimization specialist with Python code execution
+**File**: `agents/code_savy_agent.py`
+
+- **Role**: Budget optimization specialist with Python code execution capabilities
+- **Deployment**: Runs locally within Orchestrator Agent process (not A2A)
 - **Capabilities**:
-  - Calculates total costs using executable Python code
-  - Validates budget constraints
+  - Generates and executes Python code for cost calculations
+  - Validates budget constraints (default: $50)
   - Suggests substitutions if over budget
-  - Generates formatted shopping lists with quantities and prices
-- **Code Executor**: BuiltInCodeExecutor for running Python scripts
+  - Formats shopping lists with quantities and prices
+  - Provides cost breakdowns and savings analysis
+- **Code Executor**: BuiltInCodeExecutor for safe Python script execution
+- **Model**: Gemini 2.0 Flash
 
 ## Recipe Database
 
@@ -109,7 +141,7 @@ User: "Plan 5 dinners under $50 total"
               ↓
 ┌─────────────────────────────────────┐
 │   Orchestrator Agent (ADK)          │
-│   (agents/orchestrator_a2a.py)      │
+│   (agents/orchestrator_agent.py)    │
 └─────────────────────────────────────┘
               ↓ RemoteA2aAgent (A2A Protocol)
               ↓ HTTP/JSON-RPC to port 8001
@@ -167,15 +199,16 @@ User: "Plan 5 dinners under $50 total"
 
 ```
 /home/ed/kaggle/recipe/
-├── recipe_meal_planner_a2a.py     # Main CLI entry point with A2A
+├── recipe_meal_planner.py          # Main CLI entry point with A2A
 ├── recipes.py                      # Recipe database
 ├── recipe_mcp_server.py            # MCP server for recipe database
 ├── utils.py                        # Environment variables & session management
 ├── __init__.py                     # Package initialization
 ├── agents/
-│   ├── orchestrator_a2a.py        # Orchestrator with A2A communication
-│   ├── langgraph_agent_mcp.py     # LangGraph state machine with MCP
-│   └── adk_agent.py               # Code execution agent
+│   ├── orchestrator_agent.py      # Orchestrator with A2A communication
+│   ├── langgraph_helper.py        # LangGraph state machine with MCP
+│   ├── code_savy_agent.py         # Code execution agent
+│   └── recipe_planner_a2a_agent.py # Recipe planner ADK wrapper
 ├── recipe_planner_a2a_agent.py    # LangGraph wrapper for A2A
 ├── recipe_planner_a2a_server.py   # A2A server exposing Recipe Planner
 ├── start_a2a_web.sh               # Launch script for A2A web interface
@@ -234,18 +267,30 @@ These values are loaded from environment variables with sensible defaults in `ut
 
 ## Usage
 
+**IMPORTANT: Start the Recipe Planner A2A Server First**
+
+Before using either option below, you must start the Recipe Planner A2A Server:
+
+```bash
+# Terminal 1: Start the Recipe Planner A2A Server (required for both options)
+python recipe_planner_a2a_server.py
+```
+
+Keep this server running in the background. The server runs on port 8001 and provides the Recipe Planner agent via A2A protocol.
+
 ### Option 1: ADK Web UI (Recommended - Interactive Interface)
 
 Run the interactive web interface to chat with your meal planner agent:
 
 ```bash
+# Terminal 2: Start ADK web UI (default port 8000)
 # Make sure you're in the project directory
 cd /home/ed/kaggle/recipe
 
 # Activate virtual environment
 source .venv/bin/activate
 
-# Start ADK web UI (default port 8000)
+# Start ADK web UI
 adk web agents_web
 ```
 
@@ -275,6 +320,7 @@ Then open **http://localhost:8080**
 Run the command-line version with pre-configured test scenarios:
 
 ```bash
+# Terminal 2: Run the meal planner client (A2A server must be running in Terminal 1)
 python recipe_meal_planner.py
 ```
 

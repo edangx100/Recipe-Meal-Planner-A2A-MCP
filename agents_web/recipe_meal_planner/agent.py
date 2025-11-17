@@ -10,7 +10,7 @@ Before starting the web interface, you MUST start the Recipe Planner A2A Server:
     Terminal 2: adk web --agent_path agents_web/recipe_meal_planner
 
 Architecture:
-- Uses orchestrator_a2a (with RemoteA2aAgent)
+- Uses orchestrator_agent (with RemoteA2aAgent)
 - Communicates with Recipe Planner via A2A protocol on port 8001
 - Recipe Planner runs LangGraph WITHOUT using LangGraphAgent
 """
@@ -22,7 +22,7 @@ import requests
 # Add the parent directory to the path so we can import from the main project
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
-from agents.orchestrator_a2a import get_orchestrator_a2a, RECIPE_PLANNER_A2A_URL, AGENT_CARD_WELL_KNOWN_PATH
+from agents.orchestrator_agent import get_orchestrator_a2a, RECIPE_PLANNER_A2A_URL, AGENT_CARD_WELL_KNOWN_PATH
 
 # Check if Recipe Planner A2A Server is running
 def check_server():
