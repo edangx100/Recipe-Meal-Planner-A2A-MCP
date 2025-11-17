@@ -109,34 +109,49 @@ User: "Plan 5 dinners under $50 total"
               ↓
 ┌─────────────────────────────────────┐
 │   Orchestrator Agent (ADK)          │
-│   (meal_plan_orchestrator)          │
+│   (agents/orchestrator_a2a.py)      │
+└─────────────────────────────────────┘
+              ↓ RemoteA2aAgent (A2A Protocol)
+              ↓ HTTP/JSON-RPC to port 8001
+┌─────────────────────────────────────┐
+│ Recipe Planner A2A Server           │
+│ (recipe_planner_a2a_server.py)      │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Recipe Planner Agent            │ │
+│ │ (recipe_planner_a2a_agent.py)   │ │
+│ │                                 │ │
+│ │ Tool: run_recipe_planner()      │ │
+│ │   ↓                             │ │
+│ │ ┌─────────────────────────────┐ │ │
+│ │ │ LangGraph State Machine     │ │ │
+│ │ │ (langgraph_agent_mcp.py)    │ │ │
+│ │ ├─────────────────────────────┤ │ │
+│ │ │ 1. gather_preferences       │ │ │
+│ │ │    - Parse user request     │ │ │
+│ │ │    - Extract dietary info   │ │ │
+│ │ ├─────────────────────────────┤ │ │
+│ │ │ 2. suggest_recipes          │ │ │
+│ │ │    - Filter via MCP ────────┼─┼─┼──> MCP Client
+│ │ │    - Select N recipes       │ │ │         ↓
+│ │ ├─────────────────────────────┤ │ │   ┌──────────────┐
+│ │ │ 3. check_overlap            │ │ │   │  MCP Server  │
+│ │ │    - Find shared items      │ │ │   │ (recipe_mcp_ │
+│ │ ├─────────────────────────────┤ │ │   │  server.py)  │
+│ │ │ 4. optimize_list            │ │ │   └──────┬───────┘
+│ │ │    - Consolidate quantities │ │ │          ↓
+│ │ │    - Flag: [CALCULATE_COST] │ │ │   ┌──────────────┐
+│ │ └─────────────────────────────┘ │ │   │  recipes.py  │
+│ └─────────────────────────────────┘ │   └──────────────┘
+└─────────────────────────────────────┘
+              ↓ A2A Response
+┌─────────────────────────────────────┐
+│   Orchestrator Agent (ADK)          │
 └─────────────────────────────────────┘
               ↓ AgentTool invocation
 ┌─────────────────────────────────────┐
-│   Recipe Planner Agent (LangGraph)  │
-│   (langgraph_agent_mcp.py)          │
-├─────────────────────────────────────┤
-│ 1. gather_preferences               │
-│    - Parse user request             │
-│    - Extract dietary restrictions   │
-│    - Determine recipe count         │
-├─────────────────────────────────────┤
-│ 2. suggest_recipes                  │
-│    - Filter by dietary tags   ──────┼──> MCP Client
-│    - Select N recipes               │         ↓
-├─────────────────────────────────────┤   ┌──────────────────┐
-│ 3. check_overlap                    │   │   MCP Server     │
-│    - Identify shared ingredients    │   │ (recipe_mcp_     │
-│    - Group by item name             │   │  server.py)      │
-├─────────────────────────────────────┤   │  - 6 tools       │
-│ 4. optimize_list                    │   │  - 2 resources   │
-│    - Consolidate quantities         │   └────────┬─────────┘
-│    - Set [CALCULATE_COST] flag      │            ↓
-└─────────────────────────────────────┘      ┌──────────────┐
-              ↓ AgentTool invocation         │  recipes.py  │
-┌─────────────────────────────────────┐      │(all_recipes) │
-│   Code Savvy Agent (ADK)            │      └──────────────┘
-│   (code_savvy_agent_builtin)        │
+│   Code Savvy Agent (ADK)            │
+│   (agents/adk_agent.py)             │
 ├─────────────────────────────────────┤
 │ - Generate Python code              │
 │ - Calculate total costs             │
@@ -152,23 +167,27 @@ User: "Plan 5 dinners under $50 total"
 
 ```
 /home/ed/kaggle/recipe/
-├── recipe_meal_planner.py      # Main entry point (CLI mode)
-├── test_agent.py                # Test script for agent functionality
-├── recipes.py                   # Recipe database with 10 recipes
-├── utils.py                     # Environment variables & session management
-├── __init__.py                  # Package initialization
+├── recipe_meal_planner_a2a.py     # Main CLI entry point with A2A
+├── recipes.py                      # Recipe database with 10 recipes
+├── recipe_mcp_server.py            # MCP server for recipe database
+├── utils.py                        # Environment variables & session management
+├── __init__.py                     # Package initialization
 ├── agents/
-│   ├── orchestrator.py         # Main orchestrator agent
-│   ├── langgraph_agent.py      # LangGraph state machine for recipe planning
-│   └── adk_agent.py            # Code execution agent
-├── agents_web/                  # ADK Web UI configuration
+│   ├── orchestrator_a2a.py        # Orchestrator with A2A communication
+│   ├── langgraph_agent_mcp.py     # LangGraph state machine with MCP
+│   └── adk_agent.py               # Code execution agent
+├── recipe_planner_a2a_agent.py    # LangGraph wrapper for A2A (no LangGraphAgent)
+├── recipe_planner_a2a_server.py   # A2A server exposing Recipe Planner
+├── start_a2a_web.sh               # Launch script for A2A web interface
+├── agents_web/                     # ADK Web UI configuration
 │   └── recipe_meal_planner/
-│       ├── agent.py            # Web UI agent entry point
-│       └── __init__.py         # Package initialization
-├── .env                        # API keys (shared by CLI and Web UI)
-├── requirements.txt            # Python dependencies
-├── image1.png                  # Project screenshot
-└── README.md                   # This file
+│       ├── agent.py               # Web UI with A2A orchestrator
+│       ├── README.md              # Web UI documentation
+│       └── __init__.py            # Package initialization
+├── .env                           # API keys
+├── requirements.txt               # Python dependencies
+├── image1.png                     # Project screenshot
+└── README.md                      # This file
 ```
 
 ## Setup & Installation
