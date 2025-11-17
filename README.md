@@ -18,8 +18,6 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 - **Ingredient Consolidation**: Identifies shared ingredients across recipes to optimize shopping efficiency
 - **Budget Optimization**: Ensures meal plans stay within specified budget constraints (default: $50)
 - **Cost Calculation**: Generates detailed shopping lists with quantities and prices
-- **Structured Output Parsing**: Uses LLM structured output to extract meal planning requirements from natural language
-- **A2A Communication**: Distributed microservices architecture with Agent-to-Agent protocol
 
 ## Technical Features
 
@@ -46,7 +44,6 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 
 **Session Management:**
 - **InMemorySessionService** (`utils.py`) - Creates and manages user sessions with session_id and user_id tracking
-- Persistent conversation state across multiple requests (`recipe_meal_planner_a2a.py`)
 
 ### ✅4. A2A Communication Architecture
 
@@ -54,7 +51,6 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 - **RemoteA2aAgent** - Orchestrator consumes Recipe Planner via A2A protocol (HTTP/JSON-RPC on port 8001)
 - **Distributed Deployment** - Recipe Planner runs as independent server, Orchestrator as client
 - **Framework Agnostic** - Standard A2A protocol enables cross-framework, cross-language communication
-- **Independent Scaling** - Each service can scale separately in production environments
 - **AgentTool for Code Savvy** - Orchestrator uses standard AgentTool to invoke Code Savvy Agent locally
 
 ### ✅5. Model Context Protocol (MCP)
@@ -62,7 +58,6 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 **MCP Integration:**
 - **MCP Client** - Used in `langgraph_agent_mcp.py` to connect to MCP server for recipe data access
 - **MCP Server** (`recipe_mcp_server.py`) - Provides 6 tools and 2 resources for recipe database operations
-- **Protocol-based decoupling** - No direct imports of `recipes.py`, all access via standardized MCP protocol
 
 #### MCP Server Tools
 
