@@ -168,7 +168,7 @@ User: "Plan 5 dinners under $50 total"
 ```
 /home/ed/kaggle/recipe/
 ├── recipe_meal_planner_a2a.py     # Main CLI entry point with A2A
-├── recipes.py                      # Recipe database with 10 recipes
+├── recipes.py                      # Recipe database
 ├── recipe_mcp_server.py            # MCP server for recipe database
 ├── utils.py                        # Environment variables & session management
 ├── __init__.py                     # Package initialization
@@ -176,7 +176,7 @@ User: "Plan 5 dinners under $50 total"
 │   ├── orchestrator_a2a.py        # Orchestrator with A2A communication
 │   ├── langgraph_agent_mcp.py     # LangGraph state machine with MCP
 │   └── adk_agent.py               # Code execution agent
-├── recipe_planner_a2a_agent.py    # LangGraph wrapper for A2A (no LangGraphAgent)
+├── recipe_planner_a2a_agent.py    # LangGraph wrapper for A2A
 ├── recipe_planner_a2a_server.py   # A2A server exposing Recipe Planner
 ├── start_a2a_web.sh               # Launch script for A2A web interface
 ├── agents_web/                     # ADK Web UI configuration
@@ -204,8 +204,8 @@ User: "Plan 5 dinners under $50 total"
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Clone the repository
-git clone https://github.com/edangx100/Recipe-Meal-Planner.git
-cd Recipe-Meal-Planner
+git clone https://github.com/edangx100/Recipe-Meal-Planner-A2A-MCP
+cd Recipe-Meal-Planner-A2A-MCP
 
 # Create virtual environment and install dependencies
 uv venv
@@ -264,8 +264,6 @@ Then open **http://localhost:8080**
 
 - "Plan 5 dinners under $50 total"
 - "Plan 3 vegetarian dinners under $50 total with a focus on protein"
-- "Give me 4 budget-friendly dinner recipes"
-- "Plan a week of healthy dinners under $70"
 
 **What you'll see:**
 - Real-time streaming of agent responses
