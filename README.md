@@ -6,6 +6,8 @@
 
 An intelligent meal planning system built with Google ADK (Agent Development Kit) and LangGraph that creates budget-conscious meal plans with optimized shopping lists.
 
+**✨ Now features Agent-to-Agent (A2A) communication architecture for distributed microservices deployment!**
+
 ## Overview
 
 This project demonstrates a multi-agent architecture where specialized AI agents collaborate to plan meals, optimize grocery lists, and ensure budget compliance. The system takes user requests like "Plan 5 dinners under $50 total" and returns a complete meal plan with consolidated shopping lists and cost breakdowns.
@@ -17,6 +19,7 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 - **Budget Optimization**: Ensures meal plans stay within specified budget constraints (default: $50)
 - **Cost Calculation**: Generates detailed shopping lists with quantities and prices
 - **Structured Output Parsing**: Uses LLM structured output to extract meal planning requirements from natural language
+- **A2A Communication**: Distributed microservices architecture with Agent-to-Agent protocol (optional)
 
 ## Technical Features
 
@@ -25,7 +28,7 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 **Three LLM-Powered Agents**
 
 1. **Orchestrator Agent** (`agents/orchestrator.py`)
-2. **Recipe Planner Agent** (`agents/orchestrator.py`)
+2. **Recipe Planner Agent** (`agents/langgraph_agent_mcp.py`)
 3. **Code Savvy Agent** (`agents/adk_agent.py`)
 
 ### ✅2. Tools 
@@ -36,11 +39,32 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 **Built-in Tools:**
 - **BuiltInCodeExecutor** (`agents/adk_agent.py`) - Enables dynamic Python code generation and execution for budget calculations and cost optimization
 
-### ✅3. Sessions & Memory 
+### ✅3. Sessions & Memory
 
 **Session Management:**
 - **InMemorySessionService** (`utils.py`) - Creates and manages user sessions with session_id and user_id tracking
 - Persistent conversation state across multiple requests (`recipe_meal_planner.py`)
+
+### ✅4. Multi-Agent Coordination & A2A Communication
+
+**Inter-Agent Communication:**
+- **AgentTool** (`google.adk.tools.agent_tool`) - Wraps agents as callable tools for delegation
+- Orchestrator Agent invokes Recipe Planner Agent and Code Savvy Agent as tools
+- Enables seamless coordination between ADK agents and LangGraph agents
+
+**A2A Architecture (Optional - Distributed Microservices):**
+- **RemoteA2aAgent** - Consume Recipe Planner via A2A protocol (HTTP/JSON-RPC on port 8001)
+- **No LangGraphAgent Dependency** - LangGraph wrapped in tool function instead of framework wrapper
+- **Distributed Deployment** - Recipe Planner runs as independent server, Orchestrator as client
+- **Framework Agnostic** - Standard A2A protocol enables cross-framework, cross-language communication
+- **Independent Scaling** - Each service can scale separately in production environments
+
+### ✅5. Model Context Protocol (MCP)
+
+**MCP Integration:**
+- **MCP Client** - Used in `langgraph_agent_mcp.py` to connect to MCP server for recipe data access
+- **MCP Server** (`recipe_mcp_server.py`) - Provides 6 tools and 2 resources for recipe database operations
+- **Protocol-based decoupling** - No direct imports of `recipes.py`, all access via standardized MCP protocol
 
 
 ## Architecture (3-Agent System)
@@ -84,13 +108,13 @@ Each recipe includes detailed ingredient lists with quantities and individual pr
 User: "Plan 5 dinners under $50 total"
               ↓
 ┌─────────────────────────────────────┐
-│   Orchestrator Agent                │
+│   Orchestrator Agent (ADK)          │
 │   (meal_plan_orchestrator)          │
 └─────────────────────────────────────┘
-              ↓
+              ↓ AgentTool invocation
 ┌─────────────────────────────────────┐
-│   Recipe Planner Agent              │
-│   (LangGraph State Machine)         │
+│   Recipe Planner Agent (LangGraph)  │
+│   (langgraph_agent_mcp.py)          │
 ├─────────────────────────────────────┤
 │ 1. gather_preferences               │
 │    - Parse user request             │
@@ -98,20 +122,20 @@ User: "Plan 5 dinners under $50 total"
 │    - Determine recipe count         │
 ├─────────────────────────────────────┤
 │ 2. suggest_recipes                  │
-│    - Filter by dietary tags         │
-│    - Select N recipes               │
-├─────────────────────────────────────┤
-│ 3. check_overlap                    │
-│    - Identify shared ingredients    │
-│    - Group by item name             │
-├─────────────────────────────────────┤
-│ 4. optimize_list                    │
-│    - Consolidate quantities         │
-│    - Set [CALCULATE_COST] flag      │
-└─────────────────────────────────────┘
-              ↓
-┌─────────────────────────────────────┐
-│   Code Savvy Agent                  │
+│    - Filter by dietary tags   ──────┼──> MCP Client
+│    - Select N recipes               │         ↓
+├─────────────────────────────────────┤   ┌──────────────────┐
+│ 3. check_overlap                    │   │   MCP Server     │
+│    - Identify shared ingredients    │   │ (recipe_mcp_     │
+│    - Group by item name             │   │  server.py)      │
+├─────────────────────────────────────┤   │  - 6 tools       │
+│ 4. optimize_list                    │   │  - 2 resources   │
+│    - Consolidate quantities         │   └────────┬─────────┘
+│    - Set [CALCULATE_COST] flag      │            ↓
+└─────────────────────────────────────┘      ┌──────────────┐
+              ↓ AgentTool invocation         │  recipes.py  │
+┌─────────────────────────────────────┐      │(all_recipes) │
+│   Code Savvy Agent (ADK)            │      └──────────────┘
 │   (code_savvy_agent_builtin)        │
 ├─────────────────────────────────────┤
 │ - Generate Python code              │

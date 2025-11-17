@@ -30,7 +30,7 @@ from google.adk.agents.langgraph_agent import LangGraphAgent
 from google.adk.tools import agent_tool
 
 from utils import DEFAULT_REASONING_LLM
-from agents.langgraph_agent import (
+from agents.langgraph_agent_mcp import (
     get_recipe_graph,
     is_langgraph_available
 )
