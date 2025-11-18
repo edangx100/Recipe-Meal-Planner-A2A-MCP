@@ -20,10 +20,10 @@ Prerequisites:
      python recipe_planner_a2a_server.py
 
   2. Then run this script:
-     python recipe_meal_planner_a2a.py
+     python recipe_meal_planner.py
 
 Usage:
-  python recipe_meal_planner_a2a.py
+  python recipe_meal_planner.py
 """
 
 from google.adk.runners import InMemoryRunner

@@ -21,8 +21,8 @@ from google.adk.agents.remote_a2a_agent import (
     AGENT_CARD_WELL_KNOWN_PATH,
 )
 from google.adk.tools import agent_tool
-from google.adk.models.google_llm import Gemini
-from google.genai import types
+# from google.adk.models.google_llm import Gemini
+# from google.genai import types
 
 from utils import DEFAULT_REASONING_LLM
 from agents.code_savy_agent import code_savvy_agent_builtin
@@ -30,13 +30,13 @@ from agents.code_savy_agent import code_savvy_agent_builtin
 # Configuration
 RECIPE_PLANNER_A2A_URL = "http://localhost:8001"
 
-# Retry configuration
-retry_config = types.HttpRetryOptions(
-    attempts=5,
-    exp_base=7,
-    initial_delay=1,
-    http_status_codes=[429, 500, 503, 504],
-)
+# # Retry configuration
+# retry_config = types.HttpRetryOptions(
+#     attempts=5,
+#     exp_base=7,
+#     initial_delay=1,
+#     http_status_codes=[429, 500, 503, 504],
+# )
 
 
 # Create a RemoteA2aAgent that connects to the Recipe Planner Agent
@@ -49,7 +49,7 @@ remote_recipe_planner_agent = RemoteA2aAgent(
 )
 
 
-# Create the Orchestrator Agent that uses both remote and local agents
+# Orchestrator Agent uses both remote and local agents
 orchestrator_a2a = AdkAgent(
     model=DEFAULT_REASONING_LLM,
     name="meal_plan_orchestrator_a2a",

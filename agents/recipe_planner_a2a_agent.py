@@ -14,6 +14,7 @@ The wrapper:
 import os
 import sys
 import asyncio
+import nest_asyncio
 from typing import Optional
 from langchain_core.messages import HumanMessage
 
@@ -52,7 +53,6 @@ def run_recipe_planner(user_request: str) -> str:
     Returns:
         String containing the recipe plan with selected recipes and optimized grocery list
     """
-    import nest_asyncio
     nest_asyncio.apply()
 
     # Get the compiled LangGraph state machine
@@ -145,3 +145,4 @@ if __name__ == "__main__":
     print("   Description:", recipe_planner_agent.description)
     print("   Tools:", [tool.__name__ if callable(tool) else str(tool) for tool in recipe_planner_agent.tools])
     print("\nThis agent can be exposed via A2A using to_a2a()")
+ 
