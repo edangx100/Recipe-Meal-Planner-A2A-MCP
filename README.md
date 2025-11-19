@@ -8,8 +8,6 @@
 
 An intelligent meal planning system built with Google ADK (Agent Development Kit) and LangGraph that creates budget-conscious meal plans with optimized shopping lists.
 
-**✨ Built with Agent-to-Agent (A2A) communication architecture for distributed microservices deployment!**
-
 ## Overview
 
 This project demonstrates a multi-agent architecture where specialized AI agents collaborate to plan meals, optimize grocery lists, and ensure budget compliance. The system takes user requests like "Plan 5 dinners under $50 total" and returns a complete meal plan with consolidated shopping lists and cost breakdowns.
@@ -49,7 +47,7 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 
 ### ✅4. A2A Communication Architecture
 
-**Distributed Microservices:**
+**A2A Communication:**
 - **RemoteA2aAgent** - Orchestrator consumes Recipe Planner via A2A protocol (HTTP/JSON-RPC on port 8001)
 - **Distributed Deployment** - Recipe Planner runs as independent server, Orchestrator as client
 - **Framework Agnostic** - Standard A2A protocol enables cross-framework, cross-language communication
