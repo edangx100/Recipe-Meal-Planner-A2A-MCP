@@ -89,15 +89,15 @@ The MCP server (`recipe_mcp_server.py`) exposes the following tools for recipe d
 ### 2. Recipe Planner Agent (`recipe_planner_agent`)
 **Files**: `agents/recipe_planner_a2a_agent.py`, `agents/langgraph_helper.py`
 
-- **Role**: Handles recipe selection logic using a LangGraph state machine accessed via MCP
+- **Role**: Handles recipe selection logic accessed via MCP
 - **Deployment**: Runs as independent A2A server on port 8001 (`recipe_planner_a2a_server.py`)
-- **Tool**: `run_recipe_planner()` function wraps the LangGraph state machine for ADK compatibility
+- **Tool**: `run_recipe_planner()` function wraps the LangGraph state machine
 - **Workflow**: 4-node LangGraph state machine
   1. `gather_preferences`: Extracts dietary requirements and recipe count using LLM structured output (Pydantic models)
   2. `suggest_recipes`: Selects recipes from database via MCP client (calls `filter_recipes_by_tags`, `list_all_recipes`, `get_recipe_details`)
   3. `check_overlap`: Identifies shared ingredients across selected recipes
   4. `optimize_list`: Consolidates ingredients into a unified shopping list and flags for cost calculation
-- **MCP Integration**: Uses `RecipeMCPClient` to access recipe database via MCP protocol
+- **MCP Integration**: Uses `RecipeMCPClient` to access recipe database via MCP
 - **Model**: Gemini 2.5 Flash Lite
 
 <p align="center">
