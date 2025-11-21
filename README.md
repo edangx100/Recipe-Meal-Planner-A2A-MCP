@@ -42,7 +42,7 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 **Session Management:**
 - **InMemorySessionService** (`utils.py`) - Creates and manages user sessions with session_id and user_id tracking
 
-### ✅4. A2A Communication Architecture
+### ✅4. Agent2Agent (A2A) Communication 
 
 **A2A Communication:**
 - **RemoteA2aAgent** - Recipe Planner runs as independent server, Orchestrator as client. Orchestrator consumes Recipe Planner via A2A protocol (HTTP/JSON-RPC on port 8001)
