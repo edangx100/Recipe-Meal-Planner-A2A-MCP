@@ -32,7 +32,7 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 ### ✅2. Tools
 
 **Custom Tools:**
-- **run_recipe_planner** (`recipe_planner_a2a_agent.py`) - Wraps LangGraph state machine as tool function
+- **run_recipe_planner** (`recipe_planner_a2a_agent.py`) - Wraps LangGraph state machine as tool function used by Recipe Planner Agent
 
 **Built-in Tools:**
 - **BuiltInCodeExecutor** (`agents/adk_agent.py`) - Enables dynamic Python code generation and execution for budget calculations and cost optimization
