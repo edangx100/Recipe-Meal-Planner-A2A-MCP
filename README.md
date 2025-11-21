@@ -75,7 +75,7 @@ The MCP server (`recipe_mcp_server.py`) exposes the following tools for recipe d
 ### 1. Orchestrator Agent (`meal_plan_orchestrator_a2a`)
 **File**: `agents/orchestrator_agent.py`
 
-- **Role**: Main coordinator that receives user requests and delegates tasks using A2A protocol
+- **Role**: Main coordinator that receives user requests and delegates tasks to other agents
 - **Communication Pattern**:
   - Consumes Recipe Planner Agent via **RemoteA2aAgent** (A2A protocol over HTTP/JSON-RPC on port 8001)
   - Invokes Code Savvy Agent locally via **AgentTool**
