@@ -31,9 +31,6 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 
 ### ✅2. Tools
 
-**A2A Remote Agents:**
-- **RemoteA2aAgent** (`agents/orchestrator_agent.py`) - Communicates with Recipe Planner via A2A protocol
-
 **Custom Tools:**
 - **run_recipe_planner** (`recipe_planner_a2a_agent.py`) - Wraps LangGraph state machine as tool function
 
@@ -48,10 +45,7 @@ This project demonstrates a multi-agent architecture where specialized AI agents
 ### ✅4. A2A Communication Architecture
 
 **A2A Communication:**
-- **RemoteA2aAgent** - Orchestrator consumes Recipe Planner via A2A protocol (HTTP/JSON-RPC on port 8001)
-- **Distributed Deployment** - Recipe Planner runs as independent server, Orchestrator as client
-- **Framework Agnostic** - Standard A2A protocol enables cross-framework, cross-language communication
-- **AgentTool for Code Savvy** - Orchestrator uses standard AgentTool to invoke Code Savvy Agent locally
+- **RemoteA2aAgent** - Recipe Planner runs as independent server, Orchestrator as client. Orchestrator consumes Recipe Planner via A2A protocol (HTTP/JSON-RPC on port 8001)
 
 ### ✅5. Model Context Protocol (MCP)
 
